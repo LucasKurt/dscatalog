@@ -1,6 +1,8 @@
 package com.lucasprojects.dscatalog.services;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -35,9 +37,16 @@ public class ProductService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<ProductDTO> findAllPagedWithCategories() {
+		List<Product> list = repository.findAll();
+
+		return list.stream().map(product -> new ProductDTO(product)).collect(Collectors.toList());
+	}
+
+	@Transactional(readOnly = true)
 	public ProductDTO findById(Long id) {
 		Optional<Product> obj = repository.findById(id);
-		Product product = obj.orElseThrow(() -> new EntityNotFoundException("Product not found"));
+		Product product = obj.orElseThrow(() -> new EntityNotFoundException("Unable to find product with id " + id));
 
 		return new ProductDTO(product, product.getCategories());
 	}
@@ -59,7 +68,7 @@ public class ProductService {
 			product = repository.save(product);
 			return new ProductDTO(product);
 		} catch (EntityNotFoundException e) {
-			throw new EntityNotFoundException("Product not found");
+			throw new EntityNotFoundException("Unable to find product with id " + id);
 		}
 	}
 
@@ -67,7 +76,7 @@ public class ProductService {
 		try {
 			repository.deleteById(id);
 		} catch (EmptyResultDataAccessException e) {
-			throw new EntityNotFoundException("Product not found");
+			throw new EntityNotFoundException("Unable to find product with id " + id);
 		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityViolationException("Integrity violation");
 		}
@@ -79,11 +88,15 @@ public class ProductService {
 		product.setPrice(dto.getPrice());
 		product.setImgUrl(dto.getImgUrl());
 		product.setDate(dto.getDate());
-
 		product.getCategories().clear();
+		
 		dto.getCategories().forEach(catDto -> {
-			Category category = categoryRepository.getReferenceById(catDto.getId());
-			product.getCategories().add(category);
+			try {
+				Category category = categoryRepository.getReferenceById(catDto.getId());
+				product.getCategories().add(category);
+			} catch (EntityNotFoundException e) {
+				throw new EntityNotFoundException("Unable to find category with id " + catDto.getId());
+			}
 		});
 	}
 }

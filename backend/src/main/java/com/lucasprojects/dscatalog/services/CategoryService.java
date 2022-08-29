@@ -41,7 +41,7 @@ public class CategoryService {
 	@Transactional(readOnly = true)
 	public CategoryDTO findById(Long id) {
 		Optional<Category> obj = repository.findById(id);
-		Category category = obj.orElseThrow(() -> new EntityNotFoundException("Category not found"));
+		Category category = obj.orElseThrow(() -> new EntityNotFoundException("Unable to find category with id " + id));
 		
 		return new CategoryDTO(category);
 	}
@@ -62,7 +62,7 @@ public class CategoryService {
 			category = repository.save(category);			
 			return new CategoryDTO(category);
 		} catch (EntityNotFoundException e) {
-			throw new EntityNotFoundException("Category not found");
+			throw new EntityNotFoundException("Unable to find category with id " + id);
 		}
 	}
 
@@ -70,7 +70,7 @@ public class CategoryService {
 		try {
 			repository.deleteById(id);
 		} catch (EmptyResultDataAccessException e) {
-			throw new EntityNotFoundException("Category not found");
+			throw new EntityNotFoundException("Unable to find category with id " + id);
 		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityViolationException("Integrity violation");
 		}	

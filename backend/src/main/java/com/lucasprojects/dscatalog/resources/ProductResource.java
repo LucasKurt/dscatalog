@@ -1,6 +1,7 @@
 package com.lucasprojects.dscatalog.resources;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,8 +30,7 @@ public class ProductResource {
 	private ProductService service;
 
 	@GetMapping
-	public ResponseEntity<Page<ProductDTO>> findAllPaged(
-			@RequestParam(value = "page", defaultValue = "0") Integer page,
+	public ResponseEntity<Page<ProductDTO>> findAllPaged(@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
@@ -39,6 +39,13 @@ public class ProductResource {
 		Page<ProductDTO> pageList = service.findAllPaged(pageRequest);
 
 		return ResponseEntity.ok().body(pageList);
+	}
+
+	@GetMapping("/withCategories")
+	public ResponseEntity<List<ProductDTO>> findAllPagedWithCategories() {
+		List<ProductDTO> list = service.findAllPagedWithCategories();
+
+		return ResponseEntity.ok().body(list);
 	}
 
 	@GetMapping("/{id}")
