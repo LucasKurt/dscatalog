@@ -106,6 +106,18 @@ public class Product implements Serializable {
 		this.date = date;
 	}
 
+	public Instant getCreatedAt() {
+		return createdAt;
+	}
+
+	public Instant getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Instant updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
 	public Set<Category> getCategories() {
 		return categories;
 	}
