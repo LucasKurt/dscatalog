@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import com.lucasprojects.dscatalog.entities.Category;
 import com.lucasprojects.dscatalog.entities.Product;
+import com.lucasprojects.dscatalog.entities.dtos.CategoryDTO;
 import com.lucasprojects.dscatalog.entities.dtos.ProductDTO;
 
 public class Factory {
@@ -23,5 +24,20 @@ public class Factory {
 	public static ProductDTO createProductDTO() {
 		Product product = createProduct();
 		return new ProductDTO(product, product.getCategories());
+	}
+	
+	public static Category createCategory() {
+		Category category = new Category(1L, "Fashion");
+		return category;
+	}
+	
+	public static Category createCategoryWithoutId() {
+		Category category = new Category(null, "Fashion");
+		return category;
+	}
+	
+	public static CategoryDTO createCategoryDTO() {
+		Category category = createCategory();
+		return new CategoryDTO(category);
 	}
 }
