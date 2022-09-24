@@ -11,13 +11,13 @@ public class Factory {
 
 	public static Product createProduct() {
 		Product product = new Product(1L, "Phone", "Good phone", 800.0, "https://img.com/img.png", Instant.now());
-		product.getCategories().add(new Category(2L, "Eletronics"));
+		product.getCategories().add(createCategory());
 		return product;
 	}
 	
 	public static Product createProductWithoutId() {
 		Product product = new Product(null, "Phone", "Good phone", 800.0, "https://img.com/img.png", Instant.now());
-		product.getCategories().add(new Category(2L, "Eletronics"));
+		product.getCategories().add(createCategory());
 		return product;
 	}
 	
@@ -27,7 +27,7 @@ public class Factory {
 	}
 	
 	public static Category createCategory() {
-		Category category = new Category(1L, "Fashion");
+		Category category = new Category(1L, "Eletronics");
 		return category;
 	}
 	
