@@ -31,7 +31,7 @@ public class ProductRepositoryTests {
 	
 	@Test
 	public void saveShouldPersistWithAutoincrementWhenIdIsNull() {
-		Product product = Factory.createProductWithoutId();
+		Product product = Factory.createProduct(null, exsistsId);
 		
 		product = repository.save(product);
 		
@@ -44,7 +44,7 @@ public class ProductRepositoryTests {
 		Product product = repository.getReferenceById(1L);		
 		String productName = product.getName();
 		
-		product = repository.save(Factory.createProduct());
+		product = repository.save(Factory.createProduct(exsistsId, exsistsId));
 		String updatedName = product.getName();
 		
 		Assertions.assertNotEquals(productName, updatedName);
@@ -59,7 +59,7 @@ public class ProductRepositoryTests {
 	}
 
 	@Test
-	public void deleteShouldThrowExceptionWhenIdDoesNotExist() {
+	public void deleteShouldThrowEmptyResultDataAccessExceptionWhenIdDoesNotExist() {
 		Assertions.assertThrows(EmptyResultDataAccessException.class, () -> {
 			repository.deleteById(nonExsistsId);
 		});

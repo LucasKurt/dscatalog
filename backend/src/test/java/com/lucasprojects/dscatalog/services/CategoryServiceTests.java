@@ -22,35 +22,27 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.lucasprojects.dscatalog.entities.Category;
-import com.lucasprojects.dscatalog.entities.Product;
-import com.lucasprojects.dscatalog.entities.dtos.ProductDTO;
+import com.lucasprojects.dscatalog.entities.dtos.CategoryDTO;
 import com.lucasprojects.dscatalog.repositories.CategoryRepository;
-import com.lucasprojects.dscatalog.repositories.ProductRepository;
 import com.lucasprojects.dscatalog.tests.Factory;
 
 @ExtendWith(SpringExtension.class)
-public class ProductServiceTests {
+public class CategoryServiceTests {
 
 	@InjectMocks
-	private ProductService service;
+	private CategoryService service;
 	
 	@Mock
-	private ProductRepository repository;
-	
-	@Mock 
-	private CategoryRepository categoryRepository;
+	private CategoryRepository repository;
 	
 	private long existingId;
 	private long nonExistingId;
 	private long dependentId;
 	
-	private Product entity;
-	private PageImpl<Product> page;
-	private Category category;
+	private Category entity;
+	private PageImpl<Category> page;
 	
-	private ProductDTO dto;
-	private Product entityWithInvalidCategory;
-	private ProductDTO dtoWithInvalidCategory;
+	private CategoryDTO dto;
 	
 	@BeforeEach
 	void setup() throws Exception {
@@ -58,13 +50,10 @@ public class ProductServiceTests {
 		nonExistingId = 2L;
 		dependentId = 3L;
 		
-		entity = Factory.createProduct(existingId, existingId);
+		entity = Factory.createCategory(existingId);
 		page = new PageImpl<>(List.of(entity)); 
-		category = Factory.createCategory(existingId);
 				
-		dto = Factory.createProductDTO(entity);
-		entityWithInvalidCategory  = Factory.createProduct(existingId, nonExistingId);
-		dtoWithInvalidCategory = Factory.createProductDTO(entityWithInvalidCategory);
+		dto = Factory.createCategoryDTO(entity);
 		
 		Mockito.when(repository.findAll((Pageable) ArgumentMatchers.any())).thenReturn(page);
 		
@@ -74,10 +63,7 @@ public class ProductServiceTests {
 		Mockito.when(repository.getReferenceById(existingId)).thenReturn(entity);
 		Mockito.when(repository.getReferenceById(nonExistingId)).thenThrow(EntityNotFoundException.class);
 		
-		Mockito.when(categoryRepository.getReferenceById(existingId)).thenReturn(category);
-		Mockito.when(categoryRepository.getReferenceById(nonExistingId)).thenThrow(EntityNotFoundException.class);
-		
-		Mockito.when(repository.save((Product) ArgumentMatchers.any())).thenReturn(entity);
+		Mockito.when(repository.save((Category) ArgumentMatchers.any())).thenReturn(entity);
 		
 		Mockito.doNothing().when(repository).deleteById(existingId);
 		Mockito.doThrow(EmptyResultDataAccessException.class).when(repository).deleteById(nonExistingId);
@@ -88,15 +74,15 @@ public class ProductServiceTests {
 	public void findAllPagedShouldReturnPage() {
 		Pageable pageable = PageRequest.of(0, 10);
 		
-		Page<ProductDTO> result = service.findAllPaged(pageable);
+		Page<CategoryDTO> result = service.findAllPaged(pageable);
 		
 		Assertions.assertNotNull(result);
 		Mockito.verify(repository, Mockito.times(1)).findAll(pageable);
 	}
 	
 	@Test
-	public void findByIdShouldReturnProductWhenIdExists() {
-		ProductDTO dto = service.findById(existingId);
+	public void findByIdShouldReturnCategoryWhenIdExists() {
+		CategoryDTO dto = service.findById(existingId);
 		
 		Assertions.assertNotNull(dto);
 		Mockito.verify(repository, Mockito.times(1)).findById(existingId);
@@ -112,43 +98,22 @@ public class ProductServiceTests {
 	}
 	
 	@Test
-	public void insertShouldReturnProductWhenCategoryExists() {
-		ProductDTO result = service.insert(dto);
+	public void insertShouldReturnCategory() {
+		CategoryDTO result = service.insert(dto);
 		
 		Assertions.assertNotNull(result);
 		
-		Mockito.verify(categoryRepository, Mockito.times(1)).getReferenceById(existingId);
-		Mockito.verify(repository, Mockito.times(1)).save(Factory.createProduct(null, existingId));
+		Mockito.verify(repository, Mockito.times(1)).save(Factory.createCategory(null));
 	}
 	
 	@Test
-	public void insertShouldThrowEntityNotFoundExceptionWhenWhenCategoryDoesNotExists() {
-		Assertions.assertThrows(EntityNotFoundException.class, () -> {
-			service.insert(dtoWithInvalidCategory);
-		});	
-		
-		Mockito.verify(categoryRepository, Mockito.times(1)).getReferenceById(nonExistingId);
-	}
-	
-	@Test
-	public void updateShouldReturnProductWhenIdExists() {
-		ProductDTO result = service.update(existingId, dto);
+	public void updateShouldReturnCategoryWhenIdExists() {
+		CategoryDTO result = service.update(existingId, dto);
 		
 		Assertions.assertNotNull(result);
 		
 		Mockito.verify(repository, Mockito.times(1)).getReferenceById(existingId);
-		Mockito.verify(categoryRepository, Mockito.times(1)).getReferenceById(existingId);
 		Mockito.verify(repository, Mockito.times(1)).save(entity);
-	}
-	
-	@Test
-	public void updateShouldThrowEntityNotFoundExceptionWhenWhenCategoryDoesNotExists() {
-		Assertions.assertThrows(EntityNotFoundException.class, () -> {
-			service.update(existingId, dtoWithInvalidCategory);
-		});	
-		
-		Mockito.verify(repository, Mockito.times(1)).getReferenceById(existingId);
-		Mockito.verify(categoryRepository, Mockito.times(1)).getReferenceById(nonExistingId);
 	}
 	
 	@Test

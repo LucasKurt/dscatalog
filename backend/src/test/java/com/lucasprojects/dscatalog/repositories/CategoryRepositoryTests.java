@@ -31,7 +31,7 @@ public class CategoryRepositoryTests {
 	
 	@Test
 	public void saveShouldPersistWithAutoincrementWhenIdIsNull() {
-		Category Category = Factory.createCategoryWithoutId();
+		Category Category = Factory.createCategory(null);
 		
 		Category = repository.save(Category);
 		
@@ -41,10 +41,10 @@ public class CategoryRepositoryTests {
 	
 	@Test
 	public void saveShouldUpdateCategoryWhenIdIsNotNull() {
-		Category Category = repository.getReferenceById(1L);		
+		Category Category = repository.getReferenceById(exsistsId);		
 		String CategoryName = Category.getName();
 		
-		Category = repository.save(Factory.createCategory());
+		Category = repository.save(Factory.createCategory(exsistsId));
 		String updatedName = Category.getName();
 		
 		Assertions.assertNotEquals(CategoryName, updatedName);
