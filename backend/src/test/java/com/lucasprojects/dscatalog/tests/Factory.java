@@ -15,6 +15,11 @@ public class Factory {
 		return product;
 	}
 	
+	public static ProductDTO createProductDTO() {
+		Product product = createProduct(1L, 1L);
+		return new ProductDTO(product, product.getCategories());
+	}
+	
 	public static ProductDTO createProductDTO(Product product) {
 		return new ProductDTO(product, product.getCategories());
 	}
@@ -22,6 +27,11 @@ public class Factory {
 	public static Category createCategory(Long id) {
 		Category category = new Category(id, "Eletronics");
 		return category;
+	}
+	
+	public static CategoryDTO createCategoryDTO() {
+		Category category = createCategory(1L);
+		return new CategoryDTO(category);
 	}
 	
 	public static CategoryDTO createCategoryDTO(Category category) {
