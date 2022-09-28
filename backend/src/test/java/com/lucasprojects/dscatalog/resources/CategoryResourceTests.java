@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
@@ -22,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -49,7 +49,7 @@ public class CategoryResourceTests {
 	private Long dependentId;
 
 	private CategoryDTO dto;
-	private PageImpl<CategoryDTO> page;
+	private List<CategoryDTO> list;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -58,9 +58,9 @@ public class CategoryResourceTests {
 		dependentId = 3L;
 
 		dto = Factory.createCategoryDTO();
-		page = new PageImpl<>(List.of(dto));
+		list = Arrays.asList(dto);
 
-		when(service.findAllPaged(any())).thenReturn(page);
+		when(service.findAll()).thenReturn(list);
 
 		when(service.findById(existingId)).thenReturn(dto);
 		when(service.findById(nonExistingId)).thenThrow(EntityNotFoundException.class);

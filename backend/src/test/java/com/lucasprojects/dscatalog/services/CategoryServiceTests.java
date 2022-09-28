@@ -1,5 +1,6 @@
 package com.lucasprojects.dscatalog.services;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,10 +16,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.lucasprojects.dscatalog.entities.Category;
@@ -40,7 +38,7 @@ public class CategoryServiceTests {
 	private long dependentId;
 	
 	private Category entity;
-	private PageImpl<Category> page;
+	private List<Category> list;
 	
 	private CategoryDTO dto;
 	
@@ -51,11 +49,11 @@ public class CategoryServiceTests {
 		dependentId = 3L;
 		
 		entity = Factory.createCategory(existingId);
-		page = new PageImpl<>(List.of(entity)); 
+		list = Arrays.asList(entity); 
 				
 		dto = Factory.createCategoryDTO(entity);
 		
-		Mockito.when(repository.findAll((Pageable) ArgumentMatchers.any())).thenReturn(page);
+		Mockito.when(repository.findAll((Sort) ArgumentMatchers.any())).thenReturn(list);
 		
 		Mockito.when(repository.findById(existingId)).thenReturn(Optional.of(entity));
 		Mockito.when(repository.findById(nonExistingId)).thenReturn(Optional.empty());
@@ -71,13 +69,12 @@ public class CategoryServiceTests {
 	}
 	
 	@Test
-	public void findAllPagedShouldReturnPage() {
-		Pageable pageable = PageRequest.of(0, 10);
+	public void findAllPagedShouldReturnList() {
 		
-		Page<CategoryDTO> result = service.findAllPaged(pageable);
+		List<CategoryDTO> result = service.findAll();
 		
 		Assertions.assertNotNull(result);
-		Mockito.verify(repository, Mockito.times(1)).findAll(pageable);
+		Mockito.verify(repository, Mockito.times(1)).findAll(Sort.by("name"));
 	}
 	
 	@Test
