@@ -89,7 +89,7 @@ public class CategoryServiceTests {
 	}
 	
 	@Test
-	public void findByIdShouldThrowEntityNotFoundExceptionWhenIdDoesNotExists() {
+	public void findByIdShouldThrowEntityNotFoundExceptionWhenIdDoesNotExist() {
 		Assertions.assertThrows(EntityNotFoundException.class, () -> {
 			service.findById(nonExistingId);
 		});
@@ -117,7 +117,7 @@ public class CategoryServiceTests {
 	}
 	
 	@Test
-	public void updateShouldThrowEntityNotFoundExceptionWhenIdDoesNotExists() {
+	public void updateShouldThrowEntityNotFoundExceptionWhenIdDoesNotExist() {
 		Assertions.assertThrows(EntityNotFoundException.class, () -> {
 			service.update(nonExistingId, dto);
 		});
@@ -135,7 +135,7 @@ public class CategoryServiceTests {
 	}
 	
 	@Test
-	public void deleteShouldThrowEntityNotFoundExceptionWhenIdDoesNotExists() {		
+	public void deleteShouldThrowEntityNotFoundExceptionWhenIdDoesNotExist() {		
 		Assertions.assertThrows(EntityNotFoundException.class, () -> {
 			service.delete(nonExistingId);
 		});

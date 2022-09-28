@@ -122,7 +122,7 @@ public class CategoryResourceTests {
 	}
 
 	@Test
-	public void updateShouldReturnNotFoundWhenIdDoesNotExists() throws Exception {
+	public void updateShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
 		String jsonBody = mapper.writeValueAsString(dto);
 		ResultActions result = mockMvc.perform(put("/categories/{id}", nonExistingId).content(jsonBody)
 				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
@@ -131,14 +131,14 @@ public class CategoryResourceTests {
 	}
 
 	@Test
-	public void deleteShouldReturnNoContentWhenIdExistis() throws Exception {
+	public void deleteShouldReturnNoContentWhenIdExists() throws Exception {
 		ResultActions result = mockMvc.perform(delete("/categories/{id}", existingId));
 
 		result.andExpect(status().isNoContent());
 	}
 
 	@Test
-	public void deleteShouldReturnNotFoundWhenIdDoesNotExistis() throws Exception {
+	public void deleteShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
 		ResultActions result = mockMvc
 				.perform(delete("/categories/{id}", nonExistingId).accept(MediaType.APPLICATION_JSON));
 

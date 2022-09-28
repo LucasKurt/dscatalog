@@ -146,7 +146,7 @@ public class ProductResourceTests {
 	}
 
 //	@Test
-//	public void updateShouldReturnNotFoundWhenCategoryIdDoesNotExists() throws Exception {
+//	public void updateShouldReturnNotFoundWhenCategoryIdDoesNotExist() throws Exception {
 //		String jsonBody = mapper.writeValueAsString(dtoWithInvalidCategory);
 //		ResultActions result = mockMvc.perform(put("/products/{id}", existingId).content(jsonBody)
 //				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
@@ -155,7 +155,7 @@ public class ProductResourceTests {
 //	}
 
 	@Test
-	public void updateShouldReturnNotFoundWhenIdDoesNotExists() throws Exception {
+	public void updateShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
 		String jsonBody = mapper.writeValueAsString(dto);
 		ResultActions result = mockMvc.perform(put("/products/{id}", nonExistingId).content(jsonBody)
 				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
@@ -164,14 +164,14 @@ public class ProductResourceTests {
 	}
 
 	@Test
-	public void deleteShouldReturnNoContentWhenIdExistis() throws Exception {
+	public void deleteShouldReturnNoContentWhenIdExists() throws Exception {
 		ResultActions result = mockMvc.perform(delete("/products/{id}", existingId));
 
 		result.andExpect(status().isNoContent());
 	}
 
 	@Test
-	public void deleteShouldReturnNotFoundWhenIdDoesNotExistis() throws Exception {
+	public void deleteShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
 		ResultActions result = mockMvc
 				.perform(delete("/products/{id}", nonExistingId).accept(MediaType.APPLICATION_JSON));
 
