@@ -31,33 +31,33 @@ public class ProductService {
 	public Page<ProductDTO> findAllPaged(Pageable pageable) {
 		Page<Product> page = repository.findAll(pageable);
 
-		return page.map(product -> new ProductDTO(product));
+		return page.map(entity -> new ProductDTO(entity));
 	}
 
 	@Transactional(readOnly = true)
 	public ProductDTO findById(Long id) {
 		Optional<Product> obj = repository.findById(id);
-		Product product = obj.orElseThrow(() -> new EntityNotFoundException("Unable to find product with id " + id));
+		Product entity = obj.orElseThrow(() -> new EntityNotFoundException("Unable to find product with id " + id));
 
-		return new ProductDTO(product, product.getCategories());
+		return new ProductDTO(entity, entity.getCategories());
 	}
 
 	@Transactional
 	public ProductDTO insert(ProductDTO dto) {
-		Product product = new Product();
-		dtoToProduct(dto, product);
-		product = repository.save(product);
+		Product entity = new Product();
+		dtoToProduct(dto, entity);
+		entity = repository.save(entity);
 
-		return new ProductDTO(product);
+		return new ProductDTO(entity);
 	}
 
 	@Transactional
 	public ProductDTO update(Long id, ProductDTO dto) {
 		try {
-			Product product = repository.getReferenceById(id);
-			dtoToProduct(dto, product);
-			product = repository.save(product);
-			return new ProductDTO(product);
+			Product entity = repository.getReferenceById(id);
+			dtoToProduct(dto, entity);
+			entity = repository.save(entity);
+			return new ProductDTO(entity);
 		} catch (EntityNotFoundException e) {
 			if(e.getMessage() != null && e.getMessage().contains("category")) {
 				throw new EntityNotFoundException(e.getMessage());
@@ -76,20 +76,20 @@ public class ProductService {
 		}
 	}
 
-	private void dtoToProduct(ProductDTO dto, Product product) {
-		product.setName(dto.getName());
-		product.setDescription(dto.getDescription());
-		product.setPrice(dto.getPrice());
-		product.setImgUrl(dto.getImgUrl());
-		product.setDate(dto.getDate());
-		product.getCategories().clear();
+	private void dtoToProduct(ProductDTO dto, Product entity) {
+		entity.setName(dto.getName());
+		entity.setDescription(dto.getDescription());
+		entity.setPrice(dto.getPrice());
+		entity.setImgUrl(dto.getImgUrl());
+		entity.setDate(dto.getDate());
+		entity.getCategories().clear();
 		
 		dto.getCategories().forEach(catDto -> {
 			try {
 				Category category = categoryRepository.getReferenceById(catDto.getId());
-				product.getCategories().add(category);
+				entity.getCategories().add(category);
 			} catch (EntityNotFoundException e) {
-				throw new EntityNotFoundException("Unable to find category with id " + catDto.getId());
+				throw new EntityNotFoundException("Unable to find product with id " + catDto.getId());
 			}
 		});
 	}

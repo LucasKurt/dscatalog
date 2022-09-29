@@ -27,32 +27,32 @@ public class CategoryService {
 	public List<CategoryDTO> findAll() {
 		List<Category> list = repository.findAll(Sort.by("name"));
 		
-		return list.stream().map(category -> new CategoryDTO(category)).collect(Collectors.toList());
+		return list.stream().map(entity -> new CategoryDTO(entity)).collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)
 	public CategoryDTO findById(Long id) {
 		Optional<Category> obj = repository.findById(id);
-		Category category = obj.orElseThrow(() -> new EntityNotFoundException("Unable to find category with id " + id));
+		Category entity = obj.orElseThrow(() -> new EntityNotFoundException("Unable to find category with id " + id));
 		
-		return new CategoryDTO(category);
+		return new CategoryDTO(entity);
 	}
 
 	@Transactional
 	public CategoryDTO insert(CategoryDTO dto) {
-		Category category = new Category(null, dto.getName());		
-		category = repository.save(category);
+		Category entity = new Category(null, dto.getName());		
+		entity = repository.save(entity);
 		
-		return new CategoryDTO(category);
+		return new CategoryDTO(entity);
 	}
 
 	@Transactional
 	public CategoryDTO update(Long id, CategoryDTO dto) {
 		try {
-			Category category = repository.getReferenceById(id);
-			category.setName(dto.getName());
-			category = repository.save(category);			
-			return new CategoryDTO(category);
+			Category entity = repository.getReferenceById(id);
+			entity.setName(dto.getName());
+			entity = repository.save(entity);			
+			return new CategoryDTO(entity);
 		} catch (EntityNotFoundException e) {
 			throw new EntityNotFoundException("Unable to find category with id " + id);
 		}
