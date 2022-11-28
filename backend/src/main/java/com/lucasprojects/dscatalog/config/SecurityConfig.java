@@ -1,5 +1,6 @@
 package com.lucasprojects.dscatalog.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,9 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+	
+	@Value(value = "${jwt.secret}")
+	private String jwtSecret;
 
 	@Bean
 	BCryptPasswordEncoder passwordEncoder() {
@@ -21,7 +25,7 @@ public class SecurityConfig {
 	@Bean
 	JwtAccessTokenConverter accessTokenConverter() {
 		JwtAccessTokenConverter tokenConverter = new JwtAccessTokenConverter();
-		tokenConverter.setSigningKey("MY-JWT-SECRET");
+		tokenConverter.setSigningKey(jwtSecret);
 		return tokenConverter;
 	}
 	
@@ -35,13 +39,4 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-//	@Bean
-//	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
-//		return http
-//				.headers(headers -> headers.frameOptions().disable())
-//				.csrf(csrf -> csrf.disable())
-//				.authorizeHttpRequests(auth -> auth.antMatchers("/actuator/**").permitAll())
-//				.build();
-//	}
 }

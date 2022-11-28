@@ -55,7 +55,7 @@ public class Product implements Serializable {
 		this.description = description;
 		this.price = price;
 		this.imgUrl = imgUrl;
-		this.setDate(date);
+		this.date = date;
 	}
 
 	public Long getId() {
