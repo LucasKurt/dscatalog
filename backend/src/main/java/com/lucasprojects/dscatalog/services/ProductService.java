@@ -1,5 +1,7 @@
 package com.lucasprojects.dscatalog.services;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -28,8 +30,9 @@ public class ProductService {
 	private CategoryRepository categoryRepository;
 
 	@Transactional(readOnly = true)
-	public Page<ProductDTO> findAllPaged(Pageable pageable) {
-		Page<Product> page = repository.findAll(pageable);
+	public Page<ProductDTO> findAll(Long categoryId, String name, Pageable pageable) {
+		List<Category> categories = (categoryId == 0) ? null : Arrays.asList(categoryRepository.getReferenceById(categoryId));
+		Page<Product> page = repository.find(categories, name, pageable);
 
 		return page.map(entity -> new ProductDTO(entity));
 	}
@@ -48,7 +51,7 @@ public class ProductService {
 		dtoToProduct(dto, entity);
 		entity = repository.save(entity);
 
-		return new ProductDTO(entity);
+		return new ProductDTO(entity, entity.getCategories());
 	}
 
 	@Transactional
@@ -59,7 +62,7 @@ public class ProductService {
 			entity = repository.save(entity);
 			return new ProductDTO(entity);
 		} catch (EntityNotFoundException e) {
-			if(e.getMessage() != null && e.getMessage().contains("category")) {
+			if (e.getMessage().contains("category")) {
 				throw new EntityNotFoundException(e.getMessage());
 			}
 			throw new EntityNotFoundException("Unable to find product with id " + id);
@@ -83,13 +86,13 @@ public class ProductService {
 		entity.setImgUrl(dto.getImgUrl());
 		entity.setDate(dto.getDate());
 		entity.getCategories().clear();
-		
+
 		dto.getCategories().forEach(catDto -> {
 			try {
 				Category category = categoryRepository.getReferenceById(catDto.getId());
 				entity.getCategories().add(category);
 			} catch (EntityNotFoundException e) {
-				throw new EntityNotFoundException("Unable to find product with id " + catDto.getId());
+				throw new EntityNotFoundException("Unable to find category with id " + catDto.getId());
 			}
 		});
 	}
