@@ -63,7 +63,7 @@ public class ProductService {
 			entity = repository.save(entity);
 			return new ProductDTO(entity);
 		} catch (EntityNotFoundException e) {
-			if (e.getMessage().contains("category")) {
+			if (!e.equals(null)) {
 				throw new EntityNotFoundException(e.getMessage());
 			}
 			throw new EntityNotFoundException("Unable to find product with id " + id);
